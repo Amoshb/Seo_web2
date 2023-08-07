@@ -1,0 +1,50 @@
+<!-- <div class="table-container">
+    <table class="data-table">
+        <tr>
+            <th>Date</th>
+            <th>Open</th>
+            <th>High</th>
+            <th>Low</th>
+            <th>Close</th>
+        </tr>
+        {% for row in datas %}
+        <tr>
+            <td>{{ row[0] }}</td>
+            <td>{{ row[1] }}</td>
+            <td>{{ row[2] }}</td>
+            <td>{{ row[3] }}</td>
+            <td>{{ row[4] }}</td>
+        </tr>
+        {% endfor %}
+    </table>
+</div> -->
+
+
+# @app.route("/currency", methods=['GET', 'POST'])
+# def second_page():
+#     if request.method == "POST":
+#         selected_CP = request.form.get("Currency_Pairs")
+#         selected_T = request.form.get("Time_Frame")
+#         if selected_CP =="" or  selected_T == "":
+#             pass
+#         else:
+#             table = selected_CP+selected_T
+#             queries = f"SELECT date, open, high, low, close FROM {table};"
+#             get_db_path = 'sqlite:///forex_data2.db'
+#             ohlc_data = get_database_data(get_db_path, queries)
+#             dates = [data[0] for data in ohlc_data]
+#             opens = [data[1] for data in ohlc_data]
+#             highs = [data[2] for data in ohlc_data]
+#             lows = [data[3] for data in ohlc_data]
+#             closes = [data[4] for data in ohlc_data]
+#             fig = go.Figure(data=[go.Candlestick(x=dates, open=opens, high=highs, low=lows, close=closes)])
+#             fig.update_layout(
+#                     title=f'Forex Candlestick Chart {selected_CP} ({selected_T})',
+#                     xaxis_title='Date',
+#                     yaxis_title='Price',
+#                 )
+#             chart_json = chart_json = json.dumps(fig, cls=plotly.utils.PlotlyJSONEncoder)
+#             return render_template('currency.html', chart_json=chart_json)
+
+      
+#     return render_template('currency.html')

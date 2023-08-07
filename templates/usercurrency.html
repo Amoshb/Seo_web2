@@ -1,0 +1,86 @@
+<!DOCTYPE html>
+<html>
+
+<head>
+  <!-- Required meta tags -->
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <!-- Bootstrap CSS -->
+  <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.0.2/dist/css/bootstrap.min.css" rel="stylesheet" integrity="sha384-EVSTQN3/azprG1Anm3QDgpJLIm9Nao0Yz1ztcQTwFspd3yD65VohhpuuCOmLASjC" crossorigin="anonymous">
+  
+  <link rel="stylesheet" type="text/css" href="{{ url_for('static', filename='main.css') }}">
+  
+</head>
+
+<body>
+  <header class="site-header">
+    <nav class="navbar navbar-expand-md navbar-dark bg-steel fixed-top">
+      <div class="container">
+        <a class="navbar-brand mr-4" href="/userhome">Forex</a>
+        <button class="navbar-toggler" type="button" data-toggle="collapse" data-target="#navbarToggle" aria-controls="navbarToggle" aria-expanded="false" aria-label="Toggle navigation">
+          <span class="navbar-toggler-icon"></span>
+        </button>
+        <div class="collapse navbar-collapse" id="navbarToggle">
+          <div class="navbar-nav mr-auto">
+            <a class="nav-item nav-link" href="/userhome">Home</a>
+            <a class="nav-item nav-link" href="/usercurrrency">Currency</a>
+            <a class="nav-item nav-link" href="/userchart">Chart</a>
+          </div>
+          <div class="navbar-nav ml-auto">
+            <a class="nav-item nav-link" href="/userhome">{{UserName}}</a>
+            <a class="nav-item nav-link" href="/home">Sign Out</a>
+          </div>
+        </div>
+      </div>
+    </nav>
+  </header>
+  <main role="main" class="container">
+    <div class="row">
+      <div class="col-md-8">
+        <div class="dropdown">
+            <form action="/usercurrency" method="POST">
+                <label for="Currency_Pairs">Select a Currency Pairs:</label>
+                <select name="Currency_Pairs" id="Currency_Pairs">
+                    <option value="">Select an option...</option>
+                    <option value="AUDUSD">AUD/USD</option>
+                    <option value="EURJPY">EUR/JPY</option>
+                    <option value="EURUSD">EUR/USD</option>
+                    <option value="GBPUSD">GBP/USD</option>
+                    <option value="NZDUSD">NZD/USD</option>
+                    <option value="USDCAD">USD/CAD</option>
+                    <option value="USDCHF">USD/CHF</option>
+                    <option value="USDJPY">USD/JPY</option>
+                </select>
+                <label for="Time_Frame">Select a Time Frame:</label>
+                <select name="Time_Frame" id="Time_Frame">
+                    <option value="">Select an option...</option>
+                    <option value="Daily">Daily</option>
+                    <option value="Weekly">Weekly</option>
+                    <option value="Monthly">Monthly</option>
+                </select>
+                <input type="submit" value="Submit">
+            </form>
+        </div>
+        <div class="alert_message">
+            <p>{{msg}}</p>
+        </div>
+        <br>
+        <p style="font-size: large;"><b>Currently you have following pairs in your account</b></p>
+        {% if item == [] %}
+            <p style="font-size: large; font-weight: bold;"> You don't have any chart</p>
+        {% else %}
+            <ol>
+                {% for currencypair in item %}
+                    <li>{{ currencypair[0] }} {{ currencypair[1] }}</li>
+                {% endfor %}
+            </ol>
+        {% endif %}
+
+
+      </div>
+    </div>
+  </main>
+  <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.0.2/dist/js/bootstrap.bundle.min.js" integrity="sha384-MrcW6ZMFYlzcLA8Nl+NtUVF0sA7MsXsP1UyJoMp4YLEuNSfAP+JcXn/tWtIaxVXM" crossorigin="anonymous"></script>
+</body>
+
+</html>

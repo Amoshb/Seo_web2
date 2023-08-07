@@ -1,0 +1,90 @@
+{% extends "layout.html" %}
+{% block content %}
+<div class="dropdown">
+    <form action="/currency" method="POST">
+        <label for="Currency_Pairs">Select a Currency Pairs:</label>
+        <select name="Currency_Pairs" id="Currency_Pairs">
+            <option value="">Select an option...</option>
+            <option value="AUDUSD">AUD/USD</option>
+            <option value="EURJPY" disabled>EUR/JPY</option>
+            <option value="EURUSD" disabled>EUR/USD</option>
+            <option value="GBPUSD" disabled>GBP/USD</option>
+            <option value="NZDUSD" disabled>NZD/USD</option>
+            <option value="USDCAD" disabled>USD/CAD</option>
+            <option value="USDCHF" disabled>USD/CHF</option>
+            <option value="USDJPY" disabled>USD/JPY</option>
+        </select>
+        <label for="Time_Frame">Select a Time Frame:</label>
+        <select name="Time_Frame" id="Time_Frame">
+            <option value="">Select an option...</option>
+            <option value="Daily">Daily</option>
+            <option value="Weekly">Weekly</option>
+            <option value="Monthly">Monthly</option>
+        </select>
+        <input type="submit" value="Submit">
+    </form>
+</div>
+<p>Please register to access all Currency Pairs</p>
+<div class="alert_message">
+    <p>{{msg}}</p>
+</div>
+
+<div id="forex_chart"></div>
+
+
+<!-- Include Plotly library -->
+<script src="https://cdn.plot.ly/plotly-latest.min.js"></script>
+
+<!-- Load the chart using the JSON data from Flask -->
+<script>
+    var chartData = JSON.parse('{{ chart_json|safe }}');
+    var forexChart = document.getElementById('forex_chart');
+
+    // Function to toggle visibility of SMA traces
+    function toggleSMA(traceIndex) {
+        var visible = chartData.data[traceIndex].visible;
+        var legendgroup = chartData.data[traceIndex].legendgroup;
+        
+        // Toggle visibility of the selected SMA trace
+        chartData.data[traceIndex].visible = (visible === 'legendonly') ? true : 'legendonly';
+
+        // Update the plot
+        Plotly.react(forexChart, chartData.data, chartData.layout);
+
+        // If the selected SMA trace is visible, hide all others; otherwise, show all
+        if (visible === 'legendonly') {
+            for (var i = 0; i < chartData.data.length; i++) {
+                if (chartData.data[i].legendgroup === legendgroup) {
+                    chartData.data[i].visible = 'legendonly';
+                }
+            }
+        } else {
+            for (var i = 0; i < chartData.data.length; i++) {
+                if (chartData.data[i].legendgroup === legendgroup) {
+                    chartData.data[i].visible = true;
+                }
+            }
+        }
+
+        // Update the plot
+        Plotly.react(forexChart, chartData.data, chartData.layout);
+    }
+
+    // Function to add event listeners to SMA legend items
+    function addLegendListeners() {
+        var legendItems = forexChart.querySelectorAll('.legendtoggle');
+        for (var i = 0; i < legendItems.length; i++) {
+            var legendItem = legendItems[i];
+            legendItem.addEventListener('click', function (e) {
+                var traceIndex = parseInt(e.target.getAttribute('trace'));
+                toggleSMA(traceIndex);
+            });
+        }
+    }
+
+    // Initial plot creation
+    Plotly.newPlot(forexChart, chartData.data, chartData.layout).then(addLegendListeners);
+</script>
+
+
+{% endblock content %}

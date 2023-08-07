@@ -1,0 +1,113 @@
+<!DOCTYPE html>
+<html>
+
+<head>
+  <!-- Required meta tags -->
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <!-- Bootstrap CSS -->
+  <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.0.2/dist/css/bootstrap.min.css" rel="stylesheet" integrity="sha384-EVSTQN3/azprG1Anm3QDgpJLIm9Nao0Yz1ztcQTwFspd3yD65VohhpuuCOmLASjC" crossorigin="anonymous">
+  
+  <link rel="stylesheet" type="text/css" href="{{ url_for('static', filename='main.css') }}">
+  
+</head>
+
+<body>
+  <header class="site-header">
+    <nav class="navbar navbar-expand-md navbar-dark bg-steel fixed-top">
+      <div class="container">
+        <a class="navbar-brand mr-4" href="/userhome">Forex</a>
+        <button class="navbar-toggler" type="button" data-toggle="collapse" data-target="#navbarToggle" aria-controls="navbarToggle" aria-expanded="false" aria-label="Toggle navigation">
+          <span class="navbar-toggler-icon"></span>
+        </button>
+        <div class="collapse navbar-collapse" id="navbarToggle">
+          <div class="navbar-nav mr-auto">
+            <a class="nav-item nav-link" href="/userhome">Home</a>
+            <a class="nav-item nav-link" href="/usercurrency">Currency</a>
+            <a class="nav-item nav-link" href="/userchart">Chart</a>
+          </div>
+          <div class="navbar-nav ml-auto">
+            <a class="nav-item nav-link" href="/userhome">{{UserName}}</a>
+            <a class="nav-item nav-link" href="/home">Sign Out</a>
+          </div>
+        </div>
+      </div>
+    </nav>
+  </header>
+  <main role="main" class="container">
+    <div class="row">
+      <div class="col-md-8">
+        <form method="post">
+            <select name="currency" id="currencyDropdown">
+                {% for currency_pair, interval in item %}
+                    <option value="{{ currency_pair }} {{ interval }}">{{ currency_pair }} - {{ interval }}</option>
+                {% endfor %}
+            </select>
+            <input type="submit" value="Submit">
+        </form>
+        <!-- Display the selected value -->
+        {% if selected_value %}
+        <p>Selected value: {{ selected_value }}</p>
+        {% endif %}
+
+        <div id="forex_chart"></div>
+        <!-- Include Plotly library -->
+        <script src="https://cdn.plot.ly/plotly-latest.min.js"></script>
+        
+        <!-- Load the chart using the JSON data from Flask -->
+        <script>
+            var chartData = JSON.parse('{{ chart_json|safe }}');
+            var forexChart = document.getElementById('forex_chart');
+        
+            // Function to toggle visibility of SMA traces
+            function toggleSMA(traceIndex) {
+                var visible = chartData.data[traceIndex].visible;
+                var legendgroup = chartData.data[traceIndex].legendgroup;
+                
+                // Toggle visibility of the selected SMA trace
+                chartData.data[traceIndex].visible = (visible === 'legendonly') ? true : 'legendonly';
+        
+                // Update the plot
+                Plotly.react(forexChart, chartData.data, chartData.layout);
+        
+                // If the selected SMA trace is visible, hide all others; otherwise, show all
+                if (visible === 'legendonly') {
+                    for (var i = 0; i < chartData.data.length; i++) {
+                        if (chartData.data[i].legendgroup === legendgroup) {
+                            chartData.data[i].visible = 'legendonly';
+                        }
+                    }
+                } else {
+                    for (var i = 0; i < chartData.data.length; i++) {
+                        if (chartData.data[i].legendgroup === legendgroup) {
+                            chartData.data[i].visible = true;
+                        }
+                    }
+                }
+        
+                // Update the plot
+                Plotly.react(forexChart, chartData.data, chartData.layout);
+            }
+        
+            // Function to add event listeners to SMA legend items
+            function addLegendListeners() {
+                var legendItems = forexChart.querySelectorAll('.legendtoggle');
+                for (var i = 0; i < legendItems.length; i++) {
+                    var legendItem = legendItems[i];
+                    legendItem.addEventListener('click', function (e) {
+                        var traceIndex = parseInt(e.target.getAttribute('trace'));
+                        toggleSMA(traceIndex);
+                    });
+                }
+            }
+        
+            // Initial plot creation
+            Plotly.newPlot(forexChart, chartData.data, chartData.layout).then(addLegendListeners);
+        </script>
+      </div>
+    </div>
+  </main>
+  <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.0.2/dist/js/bootstrap.bundle.min.js" integrity="sha384-MrcW6ZMFYlzcLA8Nl+NtUVF0sA7MsXsP1UyJoMp4YLEuNSfAP+JcXn/tWtIaxVXM" crossorigin="anonymous"></script>
+</body>
+
+</html>
