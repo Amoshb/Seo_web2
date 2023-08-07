@@ -187,7 +187,7 @@ def usercurrency():
 @app.route("/update_server", methods=['POST'])
 def webhook():
     if request.method == 'POST':
-        repo = git.Repo('/home/Amoshb/Seo_website')
+        repo = git.Repo('/home/Amoshb/Seo_web2')
         origin = repo.remotes.origin
         origin.pull()
         return 'Updated PythonAnywhere successfully', 200
