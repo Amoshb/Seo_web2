@@ -2,6 +2,8 @@
 import unittest
 from main import *
 import sqlalchemy as db
+from unittest.mock import Mock
+from instance import DatabaseM as Table_manager
 
 class TestLogicFunctions(unittest.TestCase):
     def test_valid_inputs(self):
@@ -180,22 +182,107 @@ class TestLogicFunctions(unittest.TestCase):
 
 
         
+class TestHandleLogin(unittest.TestCase):
 
-    def test_handle_login(self):
-        # Write test cases for handle_login function
-        pass
+    def test_valid_credentials(self):
+        # Create a mock user object with valid credentials
+        class MockUser:
+            def __init__(self, username, password):
+                self.username = username
+                self.password = password
+
+        mock_user = MockUser("Amosh", "Inazuma@12")
+
+        # Call the handle_login function
+        user_info = handle_login(mock_user)
+
+        # Check that the user_info is not None (valid credentials)
+        self.assertIsNotNone(user_info)
+
+    def test_invalid_credentials(self):
+        # Create a mock user object with invalid credentials
+        class MockUser:
+            def __init__(self, username, password):
+                self.username = username
+                self.password = password
+
+        mock_user = MockUser("invalid_username", "invalid_password")
+
+        # Call the handle_login function
+        user_info = handle_login(mock_user)
+
+        # Check that the user_info is None (invalid credentials)
+        self.assertFalse(user_info)
+
+    def test_empty_user(self):
+        # Call the handle_login function with an empty user object
+        user_info = handle_login(None)
+
+        # Check that the user_info is None
+        self.assertIsNone(user_info)
 
     def test_user_home_imp(self):
         # Write test cases for user_home_imp function
         pass
 
-    def test_get_user_id_from_username(self):
-        # Write test cases for get_user_id_from_username function
-        pass
 
-    def test_get_items(self):
-        # Write test cases for get_items function
-        pass
+
+class TestGetUserIDFromUsername(unittest.TestCase):
+
+    def test_valid_username(self):
+        # Create a mock table_manager with a get_user_id method
+        mock_table_manager = Mock()
+        mock_table_manager.get_user_id.return_value = 1  # Return a user ID
+
+        # Call the get_user_id_from_username function
+        user_id = get_user_id_from_username("Amosh", mock_table_manager)
+
+        # Check that the user_id matches the expected value
+        self.assertEqual(user_id, 1)
+
+    def test_invalid_username(self):
+        # Create a mock table_manager with a get_user_id method
+        mock_table_manager = Mock()
+        mock_table_manager.get_user_id.return_value = None  # Return None for invalid username
+
+        # Call the get_user_id_from_username function
+        user_id = get_user_id_from_username("invalid_username", mock_table_manager)
+
+        # Check that the user_id is None for invalid username
+        self.assertIsNone(user_id)
+
+
+class TestGetItems(unittest.TestCase):
+
+    def test_items_found(self):
+        DATABASE_PATH = 'instance/site.db'
+        table_manager = Table_manager.NewTableManager(DATABASE_PATH)
+        user = 1
+
+        # Call the get_items function
+        items = get_items(user, table_manager)
+
+        # Check that the items match the expected result
+        self.assertIsNotNone(items)
+
+    def test_no_items(self):
+        # Create a mock table_manager with appropriate methods
+        mock_table_manager = Mock()
+        mock_table_manager.check_history.return_value = None  # Simulate no items found
+
+        # Call the get_items function
+        items = get_items(1, mock_table_manager)
+
+        # Check that the items list is empty when no items are found
+        self.assertEqual(items, [])
+
+    def test_user_id_none(self):
+        # Call the get_items function with user_id as None
+        items = get_items(None, Mock())  # We don't need a mock table_manager for this test
+
+        # Check that the result is None when user_id is None
+        self.assertEqual(items, [])
+
 
     def test_insert_user_currency_data(self):
         # Write test cases for insert_user_currency_data function

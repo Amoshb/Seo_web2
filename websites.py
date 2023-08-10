@@ -19,10 +19,6 @@ app.config['SECRET_KEY'] = secret_token
 app.config['SQLALCHEMY_DATABASE_URI'] = 'sqlite:///site.db'
 db = SQLAlchemy(app)
 
-DATABASE_NAME = 'C:\\Seo_web\\Seo_web2\\instance\\site.db'
-table_manager = Table_manager.NewTableManager(DATABASE_NAME)
-
-
 
 class User(db.Model):
   id = db.Column(db.Integer, primary_key=True)
@@ -34,10 +30,13 @@ class User(db.Model):
     return f"User('{self.username}', '{self.email}')"
 
 with app.app_context():
-  db.create_all()
-  db.session.commit()
-  db.session.close()
+    db.create_all()
+    db.session.commit()
 
+
+DATABASE_PATH = 'instance/site.db'
+
+table_manager = Table_manager.NewTableManager(DATABASE_PATH)
 
 
 
@@ -134,7 +133,10 @@ def login():
 def userhome():
     global Items
     global UserName
-    logic.user_home_imp(UserName, Items, table_manager)
+    if UserName == None:
+        return redirect("login")
+    else:
+        logic.user_home_imp(UserName, Items, table_manager)
     return render_template('Userlayout.html', UserName=UserName, item=Items)
 
 
@@ -184,16 +186,15 @@ def usercurrency():
     return render_template('usercurrency.html', UserName=UserName, item=Items, msg=msg)
 
 
-@app.route("/update_server", methods=['POST'])
+@app.route("/update_server", methods=['GET','POST'])
 def webhook():
-    if request.method == 'POST':
-        repo = git.Repo('/home/Amoshb/Seo_web2')
-        origin = repo.remotes.origin
-        origin.pull()
-        return 'Updated PythonAnywhere successfully', 200
-    else:
-        return 'Wrong event type', 400
+    repo = git.Repo('/home/Amoshb/Seo_web2')
+    origin = repo.remotes.origin
+    origin.pull()
+    return 'Updated PythonAnywhere successfully', 200
+
     
 if __name__ == '__main__':
+    print(DATABASE_PATH)
     app.run(debug=True, host="0.0.0.0", port=5004)
     
