@@ -7,7 +7,7 @@ from flask_sqlalchemy import SQLAlchemy
 import sqlalchemy as db
 from sqlalchemy.orm import Session
 from instance import DatabaseM as Table_manager
-import git 
+import git
 
 app = Flask(__name__)
 proxied = FlaskBehindProxy(app)
@@ -18,9 +18,6 @@ app.config['SECRET_KEY'] = secret_token
 
 app.config['SQLALCHEMY_DATABASE_URI'] = 'sqlite:///site.db'
 db = SQLAlchemy(app)
-
-DATABASE_NAME = 'C:\\Seo_web\\Seo_web2\\instance\\site.db'
-table_manager = Table_manager.NewTableManager(DATABASE_NAME)
 
 
 
@@ -34,12 +31,12 @@ class User(db.Model):
     return f"User('{self.username}', '{self.email}')"
 
 with app.app_context():
-  db.create_all()
-  db.session.commit()
-  db.session.close()
+      db.create_all()
+      db.session.commit()
 
 
-
+DATABASE_PATH = 'Seo_web2/instance/site.db'
+table_manager = Table_manager.NewTableManager(DATABASE_PATH)
 
 @app.route("/")
 @app.route("/home")
@@ -68,7 +65,7 @@ def table_page():
     return render_template('tables.html', datas=ohlc_data)
 
 
-    
+
 @app.route("/currency", methods=['GET', 'POST'])
 def second_page():
     chart_json = None
@@ -83,9 +80,9 @@ def second_page():
 
         if chart_json == None:
             return render_template('currency.html', msg=msg)
-        
+
     return render_template('currency.html', chart_json=chart_json)
-    
+
 
 
 @app.route("/register", methods=['GET', 'POST'])
@@ -103,8 +100,8 @@ def register():
             db.session.rollback()  # Rollback the transaction in case of an error
             flash(f'An error occurred while creating the account: {str(e)}', 'error')
             return render_template('register.html', title='Register', form=form)
-        
-        
+
+
     return render_template('register.html', title='Register', form=form)
 
 
@@ -184,16 +181,13 @@ def usercurrency():
     return render_template('usercurrency.html', UserName=UserName, item=Items, msg=msg)
 
 
-@app.route("/update_server", methods=['POST'])
+@app.route("/update_server", methods=['GET','POST'])
 def webhook():
-    if request.method == 'POST':
-        repo = git.Repo('/home/Amoshb/Seo_website')
-        origin = repo.remotes.origin
-        origin.pull()
-        return 'Updated PythonAnywhere successfully', 200
-    else:
-        return 'Wrong event type', 400
-    
+    repo = git.Repo('/home/Amoshb/mysite/Seo_web2')
+    origin = repo.remotes.origin
+    origin.pull()
+    return 'Updated PythonAnywhere successfully', 200
+
+
 if __name__ == '__main__':
-    app.run(debug=True, host="0.0.0.0", port=5004)
-    
+    app.run(debug=False, host="0.0.0.0")
