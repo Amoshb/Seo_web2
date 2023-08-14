@@ -112,7 +112,7 @@ def get_chart_data(selected_CP, selected_T):
 def handle_login(user):
     if user == None or user == "":
         return None
-        
+
     get_db_path = 'sqlite:///Seo_web2/instance/site.db'
     user_info = check_user_credentials(user.username, user.password, get_db_path)
     return user_info
