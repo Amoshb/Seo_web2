@@ -19,10 +19,6 @@ app.config['SECRET_KEY'] = secret_token
 app.config['SQLALCHEMY_DATABASE_URI'] = 'sqlite:///site.db'
 db = SQLAlchemy(app)
 
-<<<<<<< HEAD
-
-=======
->>>>>>> 5ef27cc369a62597d8c76fc567bb8ad5bfe0a2a7
 
 class User(db.Model):
   id = db.Column(db.Integer, primary_key=True)
@@ -34,18 +30,9 @@ class User(db.Model):
     return f"User('{self.username}', '{self.email}')"
 
 with app.app_context():
-<<<<<<< HEAD
-      db.create_all()
-      db.session.commit()
-=======
     db.create_all()
     db.session.commit()
 
-
-DATABASE_PATH = 'instance/site.db'
-
-table_manager = Table_manager.NewTableManager(DATABASE_PATH)
->>>>>>> 5ef27cc369a62597d8c76fc567bb8ad5bfe0a2a7
 
 
 DATABASE_PATH = 'Seo_web2/instance/site.db'
@@ -199,18 +186,11 @@ def usercurrency():
 
 @app.route("/update_server", methods=['GET','POST'])
 def webhook():
-    repo = git.Repo('C:\Seo_web\Seo_web2')
+    repo = git.Repo('/home/Amoshb/mysite/Seo_web2')
     origin = repo.remotes.origin
     origin.pull()
     return 'Updated PythonAnywhere successfully', 200
 
-<<<<<<< HEAD
+if __name__ == '__main__':
+    app.run(debug=False, host="0.0.0.0")
 
-if __name__ == '__main__':
-    app.run(debug=False, host="0.0.0.0")
-=======
-    
-if __name__ == '__main__':
-    app.run(debug=False, host="0.0.0.0")
-    
->>>>>>> 5ef27cc369a62597d8c76fc567bb8ad5bfe0a2a7

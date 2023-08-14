@@ -110,13 +110,10 @@ def get_chart_data(selected_CP, selected_T):
 
 
 def handle_login(user):
-<<<<<<< HEAD
-    get_db_path = 'sqlite:///Seo_web2/instance/site.db'
-=======
     if user == None or user == "":
         return None
-    get_db_path = f'sqlite:///instance/site.db'
->>>>>>> 5ef27cc369a62597d8c76fc567bb8ad5bfe0a2a7
+        
+    get_db_path = 'sqlite:///Seo_web2/instance/site.db'
     user_info = check_user_credentials(user.username, user.password, get_db_path)
     return user_info
 
