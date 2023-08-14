@@ -110,13 +110,17 @@ def get_chart_data(selected_CP, selected_T):
 
 
 def handle_login(user):
+<<<<<<< HEAD
     get_db_path = 'sqlite:///Seo_web2/instance/site.db'
+=======
+    if user == None or user == "":
+        return None
+    get_db_path = f'sqlite:///instance/site.db'
+>>>>>>> 5ef27cc369a62597d8c76fc567bb8ad5bfe0a2a7
     user_info = check_user_credentials(user.username, user.password, get_db_path)
     return user_info
 
 def user_home_imp(UserName, item, table_manager):
-    if UserName == None:
-        return redirect("login")
     table_manager.connect()
     user_id = table_manager.get_user_id(UserName)
     itemid = table_manager.check_history(user_id)
@@ -141,6 +145,8 @@ def get_user_id_from_username(username, table_manager):
     return user_id
 
 def get_items(user_id, table_manager):
+    if user_id == None:
+        return []
     items = []
     table_manager.connect()
     itemid = table_manager.check_history(user_id)
@@ -153,7 +159,6 @@ def get_items(user_id, table_manager):
     return items
 
 def insert_user_currency_data(username, selected_CP, selected_T, table_manager):
-    print(username)
     table_manager.connect()
     currencyid = table_manager.get_curency_id(selected_CP)
     timeid = table_manager.get_time_id(selected_T)
