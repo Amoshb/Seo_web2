@@ -3,7 +3,7 @@ import sqlite3
 from instance import DatabaseM
 
 
-TEST_DATABASE_NAME = 'C:\\final\\DatawithORMS\\instance\\site.db'
+TEST_DATABASE_NAME = 'instance/site.db'
 NewTableManager=DatabaseM.NewTableManager(TEST_DATABASE_NAME)
 class TestNewTableManager(unittest.TestCase):
     def setUp(self):
