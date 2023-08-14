@@ -1,9 +1,9 @@
 import json
 from flask import Flask, render_template, url_for, flash, redirect, request
 import plotly
-# from forms import RegistrationForm
-# from flask_behind_proxy import FlaskBehindProxy
-# from flask_sqlalchemy import SQLAlchemy
+from forms import RegistrationForm
+from flask_behind_proxy import FlaskBehindProxy
+from flask_sqlalchemy import SQLAlchemy
 import sqlalchemy as db
 import pandas as pd
 import plotly.graph_objects as go
@@ -14,7 +14,7 @@ def get_database_data(db_path, sql):
     if db_path == None or db_path == "" or sql == None or sql == "":
         print("Your path or sql query is None.")
         return None
-    
+
     engine = db.create_engine(db_path)
     with engine.connect() as connection:
         query_result = connection.execute(db.text(sql)).fetchall()
@@ -41,10 +41,10 @@ def get_table_data(selected_CP, selected_T):
     else:
         table = selected_CP + selected_T
         queries = f"SELECT date, open, high, low, close FROM {table};"
-        get_db_path = 'sqlite:///forex_data2.db'
+        get_db_path = 'sqlite:///Seo_web2/forex_data2.db'
         ohlc_data = get_database_data(get_db_path, queries)
         return ohlc_data, None
-      
+
 
 def get_chart_data(selected_CP, selected_T):
     if selected_CP == "" or selected_T == "" or selected_CP == None or selected_T == None:
@@ -52,7 +52,7 @@ def get_chart_data(selected_CP, selected_T):
     else:
         table = selected_CP + selected_T
         queries = f"SELECT date, open, high, low, close FROM {table};"
-        get_db_path = 'sqlite:///forex_data2.db'
+        get_db_path = 'sqlite:///Seo_web2/forex_data2.db'
         ohlc_data = get_database_data(get_db_path, queries)
         df = pd.DataFrame(ohlc_data, columns=['Date', 'Open', 'High', 'Low', 'Close'])
         df['SMA4'] = df['Close'].rolling(window=2).mean()
@@ -110,9 +110,13 @@ def get_chart_data(selected_CP, selected_T):
 
 
 def handle_login(user):
+<<<<<<< HEAD
+    get_db_path = 'sqlite:///Seo_web2/instance/site.db'
+=======
     if user == None or user == "":
         return None
     get_db_path = f'sqlite:///instance/site.db'
+>>>>>>> 5ef27cc369a62597d8c76fc567bb8ad5bfe0a2a7
     user_info = check_user_credentials(user.username, user.password, get_db_path)
     return user_info
 
@@ -161,7 +165,7 @@ def insert_user_currency_data(username, selected_CP, selected_T, table_manager):
     userid = table_manager.get_user_id(username)
     print(userid)
     tup = (userid, currencyid, timeid)
-    
+
     if not table_manager.check_user_history(tup):
         table_manager.insert_user_currency_data(userid, currencyid, timeid)
         table_manager.disconnect()
