@@ -20,9 +20,9 @@ jobs:
 
       - name: Test with unittest
         run: |
-          python3 -m testDataBaseM.py
-          python3 -m testlogic.py
-          python3 -m integration_test.py
+          python3 -m unittest testDataBaseM.py
+          python3 -m unittest testlogic.py
+          python3 -m unittest integration_test.py
           
       - name: Check code coverage                       
         run: |
