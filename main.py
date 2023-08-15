@@ -1,3 +1,7 @@
+""""
+This file contains the logic parts for the website.py file 
+"""
+
 import json
 from flask import Flask, render_template, url_for, flash, redirect, request
 import plotly
@@ -10,7 +14,9 @@ import plotly.graph_objects as go
 import plotly.express as px
 
 
+# Function to retrieve data from the database
 def get_database_data(db_path, sql):
+    # Check if path or SQL query is None
     if db_path == None or db_path == "" or sql == None or sql == "":
         print("Your path or sql query is None.")
         return None
@@ -20,7 +26,10 @@ def get_database_data(db_path, sql):
         query_result = connection.execute(db.text(sql)).fetchall()
     return query_result
 
+
+# Function to check user credentials
 def check_user_credentials(username, password, db_path):
+    # Check if path is None
     if db_path is None or db_path == "":
         print("Your path is None.")
         return None
@@ -33,9 +42,9 @@ def check_user_credentials(username, password, db_path):
     return query_result is not None
 
 
-
-
+# Function to get table data
 def get_table_data(selected_CP, selected_T):
+    # Check if options are selected
     if selected_CP == "" or selected_T == ""or selected_CP == None or selected_T == None:
         return None, "Select both options!"
     else:
@@ -46,7 +55,68 @@ def get_table_data(selected_CP, selected_T):
         return ohlc_data, None
 
 
+# Function to generate and set chart data
+def set_chart(dataframe, selected_CP, selected_T):
+    # Processing data and creating chart traces
+    df = dataframe
+    df['SMA4'] = df['Close'].rolling(window=2).mean()
+    df['SMA8'] = df['Close'].rolling(window=4).mean()
+    df['SMA12'] = df['Close'].rolling(window=8).mean()
+
+    candlestick_trace = go.Candlestick(
+        x=df['Date'],
+        open=df['Open'],
+        high=df['High'],
+        low=df['Low'],
+        close=df['Close'],
+        name='Candlesticks',
+    )
+
+    sma4_trace = go.Scatter(
+        x=df['Date'],
+        y=df['SMA4'],
+        mode='lines',
+        name='SMA 4',
+        visible='legendonly',
+        legendgroup='SMA',
+    )
+
+    sma8_trace = go.Scatter(
+        x=df['Date'],
+        y=df['SMA8'],
+        mode='lines',
+        name='SMA 8',
+        visible='legendonly',
+        legendgroup='SMA',
+    )
+
+    sma12_trace = go.Scatter(
+        x=df['Date'],
+        y=df['SMA12'],
+        mode='lines',
+        name='SMA 12',
+        visible='legendonly',
+        legendgroup='SMA',
+    )
+
+    # Creating and configuring the chart figure
+    fig = go.Figure(data=[candlestick_trace])
+    fig.add_trace(candlestick_trace)
+    fig.add_trace(sma4_trace)
+    fig.add_trace(sma8_trace)
+    fig.add_trace(sma12_trace)
+    fig.update_layout(
+        title=f'Forex Candlestick Chart {selected_CP} ({selected_T})',
+        xaxis_title='Date',
+        yaxis_title='Price',
+    )
+    chart_json = json.dumps(fig, cls=plotly.utils.PlotlyJSONEncoder)
+    return chart_json
+    
+
+# Function to get chart data
 def get_chart_data(selected_CP, selected_T):
+    # Check if options are selected
     if selected_CP == "" or selected_T == "" or selected_CP == None or selected_T == None:
         return None, "Select options!"
     else:
@@ -54,61 +124,12 @@ def get_chart_data(selected_CP, selected_T):
         queries = f"SELECT date, open, high, low, close FROM {table};"
         get_db_path = 'sqlite:///Seo_web2/forex_data2.db'
         ohlc_data = get_database_data(get_db_path, queries)
-        df = pd.DataFrame(ohlc_data, columns=['Date', 'Open', 'High', 'Low', 'Close'])
-        df['SMA4'] = df['Close'].rolling(window=2).mean()
-        df['SMA8'] = df['Close'].rolling(window=4).mean()
-        df['SMA12'] = df['Close'].rolling(window=8).mean()
-
-        candlestick_trace = go.Candlestick(
-            x=df['Date'],
-            open=df['Open'],
-            high=df['High'],
-            low=df['Low'],
-            close=df['Close'],
-            name='Candlesticks',
-        )
-
-        sma4_trace = go.Scatter(
-            x=df['Date'],
-            y=df['SMA4'],
-            mode='lines',
-            name='SMA 4',
-            visible='legendonly',
-            legendgroup='SMA',
-        )
-
-        sma8_trace = go.Scatter(
-            x=df['Date'],
-            y=df['SMA8'],
-            mode='lines',
-            name='SMA 8',
-            visible='legendonly',
-            legendgroup='SMA',
-        )
-
-        sma12_trace = go.Scatter(
-            x=df['Date'],
-            y=df['SMA12'],
-            mode='lines',
-            name='SMA 12',
-            visible='legendonly',
-            legendgroup='SMA',
-        )
-
-        fig = go.Figure(data=[candlestick_trace])
-        fig.add_trace(candlestick_trace)
-        fig.add_trace(sma4_trace)
-        fig.add_trace(sma8_trace)
-        fig.add_trace(sma12_trace)
-        fig.update_layout(
-            title=f'Forex Candlestick Chart {selected_CP} ({selected_T})',
-            xaxis_title='Date',
-            yaxis_title='Price',
-        )
-        chart_json = json.dumps(fig, cls=plotly.utils.PlotlyJSONEncoder)
+        dataframe =pd.DataFrame(ohlc_data, columns=['Date', 'Open', 'High', 'Low', 'Close'])
+        chart_json = set_chart(dataframe, selected_CP, selected_T)
         return chart_json, None
+    
 
-
+# Function to handle user login
 def handle_login(user):
     if user == None or user == "":
         return None
@@ -117,6 +138,8 @@ def handle_login(user):
     user_info = check_user_credentials(user.username, user.password, get_db_path)
     return user_info
 
+
+# Function to handle user home page logic
 def user_home_imp(UserName, item, table_manager):
     table_manager.connect()
     user_id = table_manager.get_user_id(UserName)
@@ -133,14 +156,15 @@ def user_home_imp(UserName, item, table_manager):
     table_manager.disconnect()
 
 
-
-
+# Function to get user ID from username
 def get_user_id_from_username(username, table_manager):
     table_manager.connect()
     user_id = table_manager.get_user_id(username)
     table_manager.disconnect()
     return user_id
 
+
+# Function to get user's currency items
 def get_items(user_id, table_manager):
     if user_id == None:
         return []
@@ -155,6 +179,8 @@ def get_items(user_id, table_manager):
     table_manager.disconnect()
     return items
 
+
+# Function to insert user's selected currency data
 def insert_user_currency_data(username, selected_CP, selected_T, table_manager):
     table_manager.connect()
     currencyid = table_manager.get_curency_id(selected_CP)

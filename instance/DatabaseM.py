@@ -1,3 +1,6 @@
+"""
+This file contains a class helps to manipulate the data from the database eg. insert, select, etc
+"""
 
 import sqlite3
 

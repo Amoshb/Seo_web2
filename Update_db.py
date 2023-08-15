@@ -1,15 +1,23 @@
+"""
+Admin have to run this program one a day to update the forex database.
+
+On line 76 Admin have to change the value of pairs(1 to 8), when they run the program each time. 
+
+Admin also need to check if database have been successfully updated or not 
+"""
+
 import requests
 import sqlalchemy as db
 import pandas as pd
 from config import API_KEY
 
 
-    
+ # Function to fetch data from the Alpha Vantage API   
 def get_api_data(url):
     response = requests.get(url)
     return response.json()
 
-
+# Function to process and create a DataFrame from API data
 def create_database(api_data,time_series):
     data = api_data[time_series]
     processed_data = []
@@ -25,7 +33,7 @@ def create_database(api_data,time_series):
     
     return pd.DataFrame(processed_data)
 
-
+# Currency pairs and timeline options
 Currencypair = {
                 '1' : ["EUR", "USD"],
                 '2' : ["USD", "JPY"],
@@ -43,13 +51,16 @@ timeline = {
             '3' : ["FX_MONTHLY", 'Time Series FX (Monthly)', "Monthly"]
             }
 
+# Create lists to store URLs, currency pairs, titles, and DataFrame titles
 set_of_url = []
-
+set_of_url = []
 from_currency = []
 to_currencey = []
-
 full_title = []
 df_title = []
+
+
+# Loop through currency pairs and timelines to generate URLs and lists
 for currency in Currencypair.values():
     for Time in timeline.values():
         url = f'https://www.alphavantage.co/query?function={Time[0]}&from_symbol={currency[0]}&to_symbol={currency[1]}&apikey={API_KEY}'
@@ -61,9 +72,12 @@ for currency in Currencypair.values():
         df_title.append(Time[2])
 
 
+# Specify a currency pair for demonstration purposes
 pairs = "8"
 first = Currencypair[pairs][0]
 second =  Currencypair[pairs][1]
+
+# Loop through URLs to fetch API data and create DataFrames
 for i in range(24):
     if from_currency[i] ==first and to_currencey[i] == second: 
         api_data = get_api_data(set_of_url[i])

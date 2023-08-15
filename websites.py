@@ -1,3 +1,8 @@
+""""
+This file contains the flask server where webpages are being routed to specific paths
+"""
+
+# Import required modules and libraries
 from flask import Flask, render_template, url_for, flash, redirect, request
 from flask_behind_proxy import FlaskBehindProxy
 import main as logic
@@ -9,17 +14,25 @@ from sqlalchemy.orm import Session
 from instance import DatabaseM as Table_manager
 import git
 
+
+# Initialize the Flask app
 app = Flask(__name__)
 proxied = FlaskBehindProxy(app)
+
+
+# Initialize global variables
 UserName = None
 Items = []
 secret_token = secrets.token_hex(16)
 app.config['SECRET_KEY'] = secret_token
 
+
+# Configure the SQLite database
 app.config['SQLALCHEMY_DATABASE_URI'] = 'sqlite:///site.db'
 db = SQLAlchemy(app)
 
 
+# Define the User model for the database
 class User(db.Model):
   id = db.Column(db.Integer, primary_key=True)
   username = db.Column(db.String(20), unique=True, nullable=False)
@@ -28,16 +41,20 @@ class User(db.Model):
 
   def __repr__(self):
     return f"User('{self.username}', '{self.email}')"
+  
 
+# Create database tables
 with app.app_context():
     db.create_all()
     db.session.commit()
 
 
-
 DATABASE_PATH = 'Seo_web2/instance/site.db'
 table_manager = Table_manager.NewTableManager(DATABASE_PATH)
 
+
+# Initialize paths and route functions
+# Home page
 @app.route("/")
 @app.route("/home")
 def home():
@@ -47,7 +64,7 @@ def home():
     return render_template('home.html')
 
 
-
+# Table page
 @app.route("/tables", methods=['GET', 'POST'])
 def table_page():
     ohlc_data = None
@@ -65,7 +82,7 @@ def table_page():
     return render_template('tables.html', datas=ohlc_data)
 
 
-
+# Currency page
 @app.route("/currency", methods=['GET', 'POST'])
 def second_page():
     chart_json = None
@@ -84,7 +101,7 @@ def second_page():
     return render_template('currency.html', chart_json=chart_json)
 
 
-
+# User registration page
 @app.route("/register", methods=['GET', 'POST'])
 def register():
     form = RegistrationForm()
@@ -101,11 +118,10 @@ def register():
             flash(f'An error occurred while creating the account: {str(e)}', 'error')
             return render_template('register.html', title='Register', form=form)
 
-
     return render_template('register.html', title='Register', form=form)
 
 
-
+# User login page
 @app.route("/login", methods=['GET', 'POST'])
 def login():
     global UserName
@@ -126,7 +142,7 @@ def login():
     return render_template('login.html', title='Login', form=form)
 
 
-
+# User home page
 @app.route("/userhome")
 def userhome():
     global Items
@@ -138,7 +154,7 @@ def userhome():
     return render_template('Userlayout.html', UserName=UserName, item=Items)
 
 
-
+# User chart page
 @app.route("/userchart", methods=['GET', 'POST'])
 def userchart():
     global UserName, Items
@@ -157,6 +173,7 @@ def userchart():
     return render_template('userchart.html', UserName=UserName, item=Items)
 
 
+# User currency page
 @app.route("/usercurrency", methods=['GET', 'POST'])
 def usercurrency():
     global Items, UserName
@@ -184,12 +201,14 @@ def usercurrency():
     return render_template('usercurrency.html', UserName=UserName, item=Items, msg=msg)
 
 
+# Webhook for updating the server
 @app.route("/update_server", methods=['GET','POST'])
 def webhook():
     repo = git.Repo('/home/Amoshb/mysite/Seo_web2')
     origin = repo.remotes.origin
     origin.pull()
     return 'Updated PythonAnywhere successfully', 200
+
 
 if __name__ == '__main__':
     app.run(debug=False, host="0.0.0.0")
