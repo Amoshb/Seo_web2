@@ -42,12 +42,14 @@
         {% if item == [] %}
             <p style="font-size: large; font-weight: bold;"> You don't have any chart</p>
         {% else %}
+          <div class="test">
             <ol>
                 {% for currencypair in item %}
                     <li>{{ currencypair[0] }} {{ currencypair[1] }}</li>
                 {% endfor %}
             </ol>
         {% endif %}
+      </div>
       </div>
     </div>
   </main>
