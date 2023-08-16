@@ -346,3 +346,37 @@ p a:hover {
 .button:focus {
   outline: none;
 }
+
+.cta-button {
+  background-color: #3498db;
+  color: white;
+  padding: 10px 20px;
+  text-decoration: none;
+  border-radius: 5px;
+}
+.cta-button:hover {
+  background-color: #2980b9;
+}
+
+.trading-tips {
+  margin-top: 30px;
+  border-top: 1px solid #ccc;
+  padding-top: 20px;
+}
+
+.trading-tips h2 {
+  font-size: 24px;
+  margin-bottom: 15px;
+  color: #333;
+}
+
+.trading-tips ul {
+  list-style-type: disc;
+  padding-left: 20px;
+}
+
+.trading-tips li {
+  font-size: 16px;
+  margin-bottom: 10px;
+  color: #555;
+}
