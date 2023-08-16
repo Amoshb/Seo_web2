@@ -12,7 +12,7 @@ from flask_sqlalchemy import SQLAlchemy
 import sqlalchemy as db
 from sqlalchemy.orm import Session
 import DatabaseM as Table_manager
-#import git
+import git
 
 
 # Initialize the Flask app
@@ -202,12 +202,12 @@ def usercurrency():
 
 
 # Webhook for updating the server
-# @app.route("/update_server", methods=['GET','POST'])
-# def webhook():
-#     repo = git.Repo('/home/Amoshb/mysite/Seo_web2')
-#     origin = repo.remotes.origin
-#     origin.pull()
-#     return 'Updated PythonAnywhere successfully', 200
+@app.route("/update_server", methods=['GET','POST'])
+def webhook():
+    repo = git.Repo('/home/Amoshb/mysite/Seo_web2')
+    origin = repo.remotes.origin
+    origin.pull()
+    return 'Updated PythonAnywhere successfully', 200
 
 
 if __name__ == '__main__':
