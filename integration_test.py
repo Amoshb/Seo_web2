@@ -20,7 +20,35 @@ class TestApp(TestCase):
         self.assert_template_used('tables.html')
         self.assertEqual(response.status_code, 200)
 
+    def test_currency_page(self):
+        response = self.client.get('/currency')
+        self.assert_template_used('currency.html')
+        self.assertEqual(response.status_code, 200)
 
+    def test_register_page(self):
+        response = self.client.get('/register')
+        self.assert_template_used('register.html')
+        self.assertEqual(response.status_code, 200)
+
+    def test_login_page(self):
+        response = self.client.get('/login')
+        self.assert_template_used('login.html')
+        self.assertEqual(response.status_code, 200)
+
+    def test_userhome_page(self):
+        response = self.client.get('/userhome')
+        self.assert_template_used('Userlayout.html')
+        self.assertEqual(response.status_code, 200)
+
+    def test_userchat_page(self):
+        response = self.client.get('/userchart')
+        self.assert_template_used('userchart.html')
+        self.assertEqual(response.status_code, 200)
+
+    def test_usercurrency_page(self):
+        response = self.client.get('/usercurrency')
+        self.assert_template_used('usercurrency.html')
+        self.assertEqual(response.status_code, 200)
 
 if __name__ == '__main__':
     unittest.main()
