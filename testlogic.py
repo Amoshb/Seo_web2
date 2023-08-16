@@ -3,7 +3,7 @@ import unittest
 from main import *
 import sqlalchemy as db
 from unittest.mock import Mock
-from instance import DatabaseM as Table_manager
+import DatabaseM as Table_manager
 
 class TestLogicFunctions(unittest.TestCase):
     def test_valid_inputs(self):
