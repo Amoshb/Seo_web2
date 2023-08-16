@@ -79,7 +79,9 @@ def table_page():
 
     if ohlc_data == None:
         return render_template('tables.html', msg=msg)
-    return render_template('tables.html', datas=ohlc_data)
+    else:
+        msg = selected_CP + " " + selected_T
+        return render_template('tables.html', datas=ohlc_data, msg=msg)
 
 
 # Currency page
