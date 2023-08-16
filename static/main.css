@@ -133,8 +133,6 @@ h2, h3, h4, h5, h6 {
   text-align: auto;
   font-weight: bold;
 }
-
-
 /* Form container style */
 form {
   margin-bottom: 20px;
@@ -222,7 +220,7 @@ input[type="submit"]:hover {
 .container {
   max-width: 1000px;
   margin: 0 auto;
-  padding: 20px;
+ 
 }
 
 /* Header styles */
@@ -328,4 +326,6 @@ p a:hover {
   text-decoration: none;
   color: #0056b3;
 }
+
+
 
