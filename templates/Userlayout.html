@@ -38,18 +38,20 @@
     <div class="row">
       <div class="col-md-8">
         <h1> Welcome to Forex Trading chart {{UserName}} </h1>
-        <p style="font-size: large;"><b>Currently you have following pairs in your account</b></p>
-        {% if item == [] %}
+        <div class="test">
+          <p style="font-size: large;"><b>Currently you have following pairs in your account</b></p>
+          {% if item == [] %}
             <p style="font-size: large; font-weight: bold;"> You don't have any chart</p>
-        {% else %}
-          <div class="test">
+          {% else %}
+          
             <ol>
                 {% for currencypair in item %}
                     <li>{{ currencypair[0] }} {{ currencypair[1] }}</li>
                 {% endfor %}
             </ol>
-          </div>
+          
         {% endif %}
+      </div>
       
       </div>
     </div>
