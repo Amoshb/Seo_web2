@@ -73,7 +73,7 @@ for currency in Currencypair.values():
 
 
 # Specify a currency pair for demonstration purposes
-pairs = "8"
+pairs = "7"
 first = Currencypair[pairs][0]
 second =  Currencypair[pairs][1]
 
